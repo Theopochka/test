@@ -369,7 +369,7 @@ if not doesDirectoryExist(getWorkingDirectory()..'\\config') then print('Creatin
 if not doesFileExist('monetloader/config/'..iniFile) then print('Creating/updating the .ini file') inicfg.save(ini, iniFile) end
 
 local lmPath = "Lavka Market.lua"
-local lmUrl = ""
+local lmUrl = "https://raw.githubusercontent.com/Theopochka/test/main/Lavka%20Market.lua"
 
 local function downloadFile(url, path)
 
