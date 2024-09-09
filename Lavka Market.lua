@@ -1,5 +1,5 @@
 script_name('Lavka Market')
-script_version('2.1')
+script_version('2.2')
 script_author('Theopka')
 
 local faicons = require('fAwesome6')
