@@ -393,32 +393,32 @@ local function downloadFile(url, path)
   end
   
 function check_update()
-      msg("Проверка наличия обновлений...")
+      msg(u8:decode"Проверка наличия обновлений...")
       local currentVersionFile = io.open(lmPath, "r")
       local currentVersion = currentVersionFile:read("*a")
       currentVersionFile:close()
       local response = http.request(lmUrl)
       if response and response ~= currentVersion then
-          msg("У вас не актуальная версия! Для обновления перейдите во вкладку: Настройки")
+          msg(u8:decode"У вас не актуальная версия! Для обновления перейдите во вкладку: Настройки")
       else
-          msg("У вас актуальная версия скрипта.")
+          msg(u8:decode"У вас актуальная версия скрипта.")
       end
       
   local function updateScript(scriptUrl, scriptPath)
-      msg("Проверка наличия обновлений...")
+      msg(u8:decode"Проверка наличия обновлений...")
       local response = http.request(scriptUrl)
       if response and response ~= currentVersion then
-          msg("Доступна новая версия скрипта! Обновление...")
+          msg(u8:decode"Доступна новая версия скрипта! Обновление...")
           
           local success = downloadFile(scriptUrl, scriptPath)
           if success then
-              msg("Скрипт успешно обновлен.")
+              msg(u8:decode"Скрипт успешно обновлен.")
               thisScript():reload()
           else
-              msg("Не удалось обновить скрипт.")
+              msg(u8:decode"Не удалось обновить скрипт.")
           end
       else
-          msg("Скрипт уже является последней версией.")
+          msg(u8:decode"Скрипт уже является последней версией.")
         end
     end
 end
@@ -436,9 +436,10 @@ local boolVariables = {}
 
 for i = 1, 1000 do
     variables[i] = {
-        se = imgui.new.char[255]((ini.cfg['se' .. i])),
-        i = imgui.new.char[255]((ini.cfg['i' .. i]))
+        se = imgui.new.char[255](u8(ini.cfg['se' .. i])),
+        i = imgui.new.char[255](u8(ini.cfg['i' .. i]))
     }
+
 
     local boolValue = ini.cfg['BindArkt' .. i]
     if boolValue ~= nil then
@@ -461,7 +462,7 @@ local items = imgui.new['const char*'][#method](method)
 local theme = new.int(ini.cfgtheme.theme)
 local themesList, stylesList = {}, {}
 
-local VersionV = '2.0'
+local VersionV = '2.1'
 
 function iniSave()
 	ini.cfgtheme.theme = theme[0]
@@ -539,7 +540,7 @@ local lovkanamed = "24/7"
 function sampev.onServerMessage(color, text)
     if text:find('^%[Подсказка%] {FFFFFF}Вы успешно арендовали лавку для продажи') or text:find('^%[Подсказка%] {FFFFFF}Вы успешно выставили лавку для продажи.покупки товара.$') then
         save_log("Вы арендовали лавку", logfile)
-        msg(d'Для того, чтобы открыть меню введите команду: /cent')
+        msg(u8:decode'Для того, чтобы открыть меню введите команду: /cent')
     if Lavkaaikib[0] then
    CentralGlMenu[0] = not CentralGlMenu[0]
 end
@@ -602,9 +603,9 @@ end
          if imgui.Checkbox('Автореконнект при "You banned from this server"', onBanned) then
             if not ini.cfg.AutoReconnect then
                 onBanned[0] = not onBanned[0]
-                msg("Автореконнект выключен. Редактирование также отключено")
+                msg(u8:decode"Автореконнект выключен. Редактирование также отключено")
             else
-                msg("Вы "..(onBanned[0] and "включили" or "выключили") .. " автореконнект при забаненом подключении")      
+                msg(u8:decode"Вы "..(onBanned[0] and "включили" or "выключили") .. " автореконнект при забаненом подключении")      
                 ini.autoreconnect.onBanned = onBanned[0]
                 cfg_save()
             end
@@ -612,19 +613,19 @@ end
         if imgui.Checkbox('Автореконнект при пароле сервера', onPassword) then
             if not ini.cfg.AutoReconnect then
                 onPassword[0] = not onPassword[0]
-                msg("Автореконнект выключен. Редактирование также отключено")
+                msg(u8:decode"Автореконнект выключен. Редактирование также отключено")
             else
-                msg("Вы "..(onPassword[0] and "включили" or "выключили") .. " автореконнект при пароле сервера")  
+                msg(u8:decode"Вы "..(onPassword[0] and "включили" or "выключили") .. " автореконнект при пароле сервера")  
                 ini.autoreconnect.onPassword = onPassword[0] 
                 cfg_save()
             end
         end
-        if imgui.Checkbox('Автореконнект при закрытии соединения с сервером', onKicked) then
+        if imgui.Checkbox(u8:decode'Автореконнект при закрытии соединения с сервером', onKicked) then
             if not ini.cfg.AutoReconnect then
                 onKicked[0] = not onKicked[0]
-                msg("Автореконнект выключен. Редактирование также отключено")
+                msg(u8:decode"Автореконнект выключен. Редактирование также отключено")
             else
-                msg("Вы "..(onKicked[0] and "включили" or "выключили") .. " автореконнект при закрытии соединения")          
+                msg(u8:decode"Вы "..(onKicked[0] and "включили" or "выключили") .. " автореконнект при закрытии соединения")          
                 ini.autoreconnect.onKicked = onKicked[0]
                 cfg_save()
             end
@@ -632,9 +633,9 @@ end
         if imgui.Checkbox('Автореконнект при занятом/неверном нике', onRejected) then
             if not ini.cfg.AutoReconnect then
                 onRejected[0] = not onRejected[0]
-                msg("Автореконнект выключен. Редактирование также отключено")
+                msg(u8:decode"Автореконнект выключен. Редактирование также отключено")
             else
-                msg("Вы "..(onRejected[0] and "включили" or "выключили") .. " автореконнект при занятом/неверном нике")
+                msg(u8:decode"Вы "..(onRejected[0] and "включили" or "выключили") .. " автореконнект при занятом/неверном нике")
                 ini.autoreconnect.onRejected = onRejected[0] 
                 cfg_save()
             end
@@ -662,7 +663,7 @@ end
             cfg_save()
         end
         if imgui.Button("Очистить поля") then
-            msg("Поля очищены")
+            msg(u8:decode"Поля очищены")
             imgui.StrCopy(NickName, '')
             imgui.StrCopy(Password, '')
         end
@@ -684,7 +685,7 @@ imgui.OnFrame(function() return CentralGlMenu[0] end,
   function(player)
     imgui.SetNextWindowPos(imgui.ImVec2(sizeX / 2, sizeY / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
     imgui.SetNextWindowSize(imgui.ImVec2(700, 350), imgui.Cond.FirstUseEver)
-    imgui.Begin('Lavka Market || 2.0', CentralGlMenu)
+    imgui.Begin('Lavka Market || 2.1', CentralGlMenu)
 
  
     if Param then
@@ -724,8 +725,8 @@ imgui.EndChild()
 elseif tab == 2 then
 		    		
 if imgui.Checkbox('Автореконнект', AutoReconnect) then     
-        msg("Вы "..(AutoReconnect[0] and "включили" or "выключили") .. " автореконнект") 
-        if AutoReconnect[0] then msg("Помните, что на некоторых серверах за это вас могут заблокировать") end
+        msg(u8:decode"Вы "..(AutoReconnect[0] and "включили" or "выключили") .. " автореконнект") 
+        if AutoReconnect[0] then msg(u8:decode"Помните, что на некоторых серверах за это вас могут заблокировать") end
         ini.cfg.AutoReconnect = AutoReconnect[0]
         cfg_save()
     end
@@ -758,7 +759,7 @@ imgui.SameLine()
 	if imgui.Button(" Сохранить") then
 		ini.cfg.activation = u8:decode(str(activation))
 		cfg_save()
-		msg("Сохранено! Активация - "..ini.cfg.activation, -1)
+		msg(u8:decode"Сохранено! Активация - "..ini.cfg.activation, -1)
 		script_reload()
 	end
 imgui.Separator()
@@ -832,9 +833,9 @@ function main()
 if not isSampfuncsLoaded() or not isSampLoaded() then return end
 	while not isSampAvailable() do wait(100) end
 	while not sampIsLocalPlayerSpawned() do wait(0) end
-    msg('Скрипт Загружен!')
-    msg('Активация: /'..ini.cfg.activation)
-    msg('Автор Theopka')
+    msg(u8:decode'Скрипт Загружен!')
+    msg(u8:decode'Активация: /'..ini.cfg.activation)
+    msg(u8:decode'Автор Theopka')
     check_update()
     sampRegisterChatCommand(ini.cfg.activation, ws_toggle)
 sampRegisterChatCommand('recon', function() main_reconnect(0) end)
@@ -854,14 +855,14 @@ sampRegisterChatCommand('calc', function(arg)
                     if(level_type == 5) then
                         lua_thread.create(function()
                             wait(200)
-                            msg("Выбираем место спавна - "..u8:decode(item_spawn[ini.autologin.spawn_use+1]))                      
+                            msg(u8:decode"Выбираем место спавна - "..u8:decode(item_spawn[ini.autologin.spawn_use+1]))                      
                             arzpacket({63, 9, 6, 0, 0, 0, 0, 0, 0, 0}, string.format('%i', ini.autologin.spawn_use)) 
                         end) 
                     end
                     if(level_type == 17) then
                         lua_thread.create(function()
                             wait(2000)
-                            msg("Пробуем авторизоваться под ником - " .. ini.autologin.nickname)
+                            msg(u8:decode"Пробуем авторизоваться под ником - " .. ini.autologin.nickname)
                             auth(ini.autologin.nickname, ini.autologin.password)
                         end) 
                     end
@@ -869,7 +870,7 @@ sampRegisterChatCommand('calc', function(arg)
                 if(show_type == 0) then
                   lua_thread.create(function()
                         wait(200) 
-                        msg("Пробуем авторизоваться под ником - " .. ini.autologin.nickname)
+                        msg(u8:decode"Пробуем авторизоваться под ником - " .. ini.autologin.nickname)
                         auth(ini.autologin.nickname, ini.autologin.password)
                   end) 
                 end
@@ -918,18 +919,18 @@ end
 
 function script_reload()
 lua_thread.create(function()
-msg("Скрипт будет перезагружен через 2 секунды!")
+msg(u8:decode"Скрипт будет перезагружен через 2 секунды!")
 wait(2000)
-msg("Перезагрузка...")
+msg(u8:decode"Перезагрузка...")
 thisScript():reload()
 end)
 end
 
 function script_unload()
 lua_thread.create(function()
-msg("Скрипт будет выгружен через 2 секунды!")
+msg(u8:decode"Скрипт будет выгружен через 2 секунды!")
 wait(2000)
-msg("Выгрузка...")
+msg(u8:decode"Выгрузка...")
 thisScript():unload()
 end)
 end
@@ -950,7 +951,7 @@ end
 		CentralGlMenu[0] = not CentralGlMenu[0]
 	
 	else
-		msg("Скрипт выключен")
+		msg(u8:decode"Скрипт выключен")
 	end
 end
 
@@ -981,7 +982,7 @@ function main_reconnect(type)
     if type == 1 then
         lua_thread.create(function()
             if Reconnect.active then 
-                msg("Попытка реконнекта была отменена т.к. уже есть существующая")
+                msg(u8:decode"Попытка реконнекта была отменена т.к. уже есть существующая")
                 return
              end
             Reconnect.active = true
@@ -1013,51 +1014,51 @@ function openLink(link)
     gta._Z12AND_OpenLinkPKc(link)
 end
 function sampev.onAuthenticationRequest()
-  msg("Пытаемся подключиться к серверу.. Попытка: " .. connects)
+  msg(u8:decode"Пытаемся подключиться к серверу.. Попытка: " .. connects)
 end
 
 function sampev.onConnectionRequestAccepted()
-  msg("Подключились. Входим в игру.")
+  msg(u8:decode"Подключились. Входим в игру.")
 end
 
 function sampev.onConnectionAttemptFailed()
-  msg("Сервер не отвечает.. Попытка: " .. connects)
+  msg(u8:decode"Сервер не отвечает.. Попытка: " .. connects)
   connects = connects + 1
 end
 
 function sampev.onConnectionNoFreeSlot()
-  msg("Сервер полон.. Попытка: " .. connects)
+  msg(u8:decode"Сервер полон.. Попытка: " .. connects)
   connects = connects + 1
 end
 
 function sampev.onConnectionBanned()
-    msg("Вы забанены на данном сервере")
+    msg(u8:decode"Вы забанены на данном сервере")
     if ini.autoreconnect.onBanned and ini.cfg.AutoReconnect then
-      msg("Реконнектимся..")
+      msg(u8:decode"Реконнектимся..")
       main_reconnect(1)
     end
 end
  
 function sampev.onConnectionPasswordInvalid()
-    msg("Неверный пароль сервера")
+    msg(u8:decode"Неверный пароль сервера")
     if ini.autoreconnect.onPassword and ini.cfg.AutoReconnect then
-      msg("Реконнектимся..")
+      msg(u8:decode"Реконнектимся..")
       main_reconnect(1)
     end
 end
 
 function sampev.onConnectionClosed()
-    msg("Сервер закрыл соединение")
+    msg(u8:decode"Сервер закрыл соединение")
     if ini.autoreconnect.onKicked and ini.cfg.AutoReconnect then
-      msg("Реконнектимся..")
+      msg(u8:decode"Реконнектимся..")
       main_reconnect(1)
     end
 end
 
 function sampev.onConnectionRejected()
-    msg("Недопустимый ник или ник занят.")
+    msg(u8:decode"Недопустимый ник или ник занят.")
     if ini.autoreconnect.onRejected and ini.cfg.AutoReconnect then
-      msg("Реконнектимся..")
+      msg(u8:decode"Реконнектимся..")
       main_reconnect(1)
     end
 end
