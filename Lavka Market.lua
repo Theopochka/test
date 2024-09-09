@@ -8,6 +8,7 @@ local imgui = require ('mimgui')
 local encoding = require ('encoding')
 encoding.default = 'CP1251'
 
+
 local filter = imgui.ImGuiTextFilter() 
 local u8 = encoding.UTF8
 local new = imgui.new
@@ -391,34 +392,36 @@ local function downloadFile(url, path)
     end
   end
   
-      sampAddChatMessage("[Sashe4ka Police Helper]: {FFFFFF} Проверка наличия обновлений...", 0x8B00FF)
+function check_update()
+      msg("Проверка наличия обновлений...")
       local currentVersionFile = io.open(lmPath, "r")
       local currentVersion = currentVersionFile:read("*a")
       currentVersionFile:close()
       local response = http.request(lmUrl)
       if response and response ~= currentVersion then
-          sampAddChatMessage("[Sashe4ka Police Helper]: {FFFFFF} У вас не актуальная версия! Для обновления перейдите во вкладку Инфо", 0x8B00FF)
+          msg("У вас не актуальная версия! Для обновления перейдите во вкладку: Настройки")
       else
-          sampAddChatMessage("[Sashe4ka Police Helper]: {FFFFFF} У вас актуальная версия скрипта.", 0x8B00FF)
+          msg("У вас актуальная версия скрипта.")
       end
       
   local function updateScript(scriptUrl, scriptPath)
-      sampAddChatMessage("[Sashe4ka Police Helper]: {FFFFFF} Проверка наличия обновлений...", 0x8B00FF)
+      msg("Проверка наличия обновлений...")
       local response = http.request(scriptUrl)
       if response and response ~= currentVersion then
-          sampAddChatMessage("[Sashe4ka Police Helper]: {FFFFFF} Доступна новая версия скрипта! Обновление...", 0x8B00FF)
+          msg("Доступна новая версия скрипта! Обновление...")
           
           local success = downloadFile(scriptUrl, scriptPath)
           if success then
-              sampAddChatMessage("[Sashe4ka Police Helper]: {FFFFFF} Скрипт успешно обновлен.", 0x8B00FF)
+              msg("Скрипт успешно обновлен.")
               thisScript():reload()
           else
-              sampAddChatMessage("[Sashe4ka Police Helper]: {FFFFFF} Не удалось обновить скрипт.", 0x8B00FF)
+              msg("Не удалось обновить скрипт.")
           end
       else
-          sampAddChatMessage("[Sashe4ka Police Helper]: {FFFFFF} Скрипт уже является последней версией.", 0x8B00FF)
-      end
-  end
+          msg("Скрипт уже является последней версией.")
+        end
+    end
+end
 
 local new, str, sizeof = imgui.new, ffi.string, ffi.sizeof
 local NickName, Password = new.char[256](ini.autologin.nickname), new.char[256](ini.autologin.password)
@@ -433,8 +436,8 @@ local boolVariables = {}
 
 for i = 1, 1000 do
     variables[i] = {
-        se = imgui.new.char[255](u8(ini.cfg['se' .. i])),
-        i = imgui.new.char[255](u8(ini.cfg['i' .. i]))
+        se = imgui.new.char[255]((ini.cfg['se' .. i])),
+        i = imgui.new.char[255]((ini.cfg['i' .. i]))
     }
 
     local boolValue = ini.cfg['BindArkt' .. i]
@@ -447,12 +450,12 @@ end
 -- Теперь переменные доступны напрямую из массивов без глобальной области видимости
 -- Например, variables[1].se, variables[1].i, boolVariables[1]
 
-local activation = new.char[255](u8(ini.cfg.activation))
+local activation = new.char[255]((ini.cfg.activation))
 local activated = false
 
 local eat = new.bool(ini.eat.autoeat)
 local eat_choice = new.int(ini.eat.eatchoice)
-local method = {u8'Чипсы', u8'Оленина', u8'Рыба'}
+local method = {'Чипсы', 'Оленина', 'Рыба'}
 local items = imgui.new['const char*'][#method](method)
 
 local theme = new.int(ini.cfgtheme.theme)
@@ -536,7 +539,7 @@ local lovkanamed = "24/7"
 function sampev.onServerMessage(color, text)
     if text:find('^%[Подсказка%] {FFFFFF}Вы успешно арендовали лавку для продажи') or text:find('^%[Подсказка%] {FFFFFF}Вы успешно выставили лавку для продажи.покупки товара.$') then
         save_log("Вы арендовали лавку", logfile)
-        msg('Для того, чтобы открыть меню введите команду: /cent')
+        msg(d'Для того, чтобы открыть меню введите команду: /cent')
     if Lavkaaikib[0] then
    CentralGlMenu[0] = not CentralGlMenu[0]
 end
@@ -572,7 +575,7 @@ end
 imgui.OnFrame(function() return LogMenu[0] end, function(player)
   
     imgui.SetNextWindowPos(imgui.ImVec2(sw / 2, sh / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
-    imgui.Begin(u8'Central ADD Vip Version', LogMenu, imgui.WindowFlags.AlwaysAutoResize + imgui.WindowFlags.NoTitleBar)
+    imgui.Begin('Central ADD Vip Version', LogMenu, imgui.WindowFlags.AlwaysAutoResize + imgui.WindowFlags.NoTitleBar)
   
   for i, CentralHelper in ipairs(logsFiles) do
     if imgui.Button(CentralHelper) then
@@ -586,7 +589,7 @@ imgui.OnFrame(function() return LogMenu[0] end, function(player)
         openlog:close()
     end
 end
-if imgui.Button(u8'Закрыть', imgui.ImVec2(-1, 29)) then
+if imgui.Button('Закрыть', imgui.ImVec2(-1, 29)) then
 LogMenu[0] = not LogMenu[0]
 end
     imgui.End()
@@ -595,8 +598,8 @@ end
     imgui.OnFrame(function() return recMenu[0] end, function(player)
   
     imgui.SetNextWindowPos(imgui.ImVec2(sw / 2, sh / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
-    imgui.Begin(u8'Central rrADD Vip Version', recMenu, imgui.WindowFlags.AlwaysAutoResize + imgui.WindowFlags.NoTitleBar)
-         if imgui.Checkbox(u8'Автореконнект при "You banned from this server"', onBanned) then
+    imgui.Begin('Central rrADD Vip Version', recMenu, imgui.WindowFlags.AlwaysAutoResize + imgui.WindowFlags.NoTitleBar)
+         if imgui.Checkbox('Автореконнект при "You banned from this server"', onBanned) then
             if not ini.cfg.AutoReconnect then
                 onBanned[0] = not onBanned[0]
                 msg("Автореконнект выключен. Редактирование также отключено")
@@ -606,7 +609,7 @@ end
                 cfg_save()
             end
         end
-        if imgui.Checkbox(u8'Автореконнект при пароле сервера', onPassword) then
+        if imgui.Checkbox('Автореконнект при пароле сервера', onPassword) then
             if not ini.cfg.AutoReconnect then
                 onPassword[0] = not onPassword[0]
                 msg("Автореконнект выключен. Редактирование также отключено")
@@ -616,7 +619,7 @@ end
                 cfg_save()
             end
         end
-        if imgui.Checkbox(u8'Автореконнект при закрытии соединения с сервером', onKicked) then
+        if imgui.Checkbox('Автореконнект при закрытии соединения с сервером', onKicked) then
             if not ini.cfg.AutoReconnect then
                 onKicked[0] = not onKicked[0]
                 msg("Автореконнект выключен. Редактирование также отключено")
@@ -626,7 +629,7 @@ end
                 cfg_save()
             end
         end
-        if imgui.Checkbox(u8'Автореконнект при занятом/неверном нике', onRejected) then
+        if imgui.Checkbox('Автореконнект при занятом/неверном нике', onRejected) then
             if not ini.cfg.AutoReconnect then
                 onRejected[0] = not onRejected[0]
                 msg("Автореконнект выключен. Редактирование также отключено")
@@ -636,11 +639,11 @@ end
                 cfg_save()
             end
         end
-        if imgui.SliderFloat(u8'Задержка', Reconnect.delay, 0.0, 1000.0) then
+        if imgui.SliderFloat('Задержка', Reconnect.delay, 0.0, 1000.0) then
             ini.autoreconnect.delay = Reconnect.delay[0]
             cfg_save()
         end 
-if imgui.Button(u8'Закрыть', imgui.ImVec2(-1, 29)) then
+if imgui.Button('Закрыть', imgui.ImVec2(-1, 29)) then
 recMenu[0] = not recMenu[0]
 end
     imgui.End()
@@ -649,7 +652,7 @@ end
     imgui.OnFrame(function() return outhmenu[0] end, function(player)
   
     imgui.SetNextWindowPos(imgui.ImVec2(sw / 2, sh / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
-    imgui.Begin(u8'Cerrntral rrADD Vip Version', outhmenu, imgui.WindowFlags.AlwaysAutoResize + imgui.WindowFlags.NoTitleBar)
+    imgui.Begin('Cerrntral rrADD Vip Version', outhmenu, imgui.WindowFlags.AlwaysAutoResize + imgui.WindowFlags.NoTitleBar)
             if imgui.InputText("NickName", NickName, sizeof(NickName)) then
             ini.autologin.nickname = str(NickName)
             cfg_save()
@@ -658,16 +661,16 @@ end
             ini.autologin.password = str(Password)
             cfg_save()
         end
-        if imgui.Button(u8"Очистить поля") then
+        if imgui.Button("Очистить поля") then
             msg("Поля очищены")
             imgui.StrCopy(NickName, '')
             imgui.StrCopy(Password, '')
         end
-        if imgui.Combo(u8"Место спавна", current_item_spawn, items_spawn, #item_spawn) then
+        if imgui.Combo("Место спавна", current_item_spawn, items_spawn, #item_spawn) then
             ini.autologin.spawn_use = current_item_spawn[0]
             cfg_save()
         end  
-if imgui.Button(u8'Закрыть', imgui.ImVec2(-1, 29)) then
+if imgui.Button('Закрыть', imgui.ImVec2(-1, 29)) then
 outhmenu[0] = not outhmenu[0]
 end
     imgui.End()
@@ -681,7 +684,7 @@ imgui.OnFrame(function() return CentralGlMenu[0] end,
   function(player)
     imgui.SetNextWindowPos(imgui.ImVec2(sizeX / 2, sizeY / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
     imgui.SetNextWindowSize(imgui.ImVec2(700, 350), imgui.Cond.FirstUseEver)
-    imgui.Begin(u8'Lavka Market || 2.0', CentralGlMenu)
+    imgui.Begin('Lavka Market || 2.0', CentralGlMenu)
 
  
     if Param then
@@ -693,25 +696,25 @@ imgui.OnFrame(function() return CentralGlMenu[0] end,
         commands = {textlog}
         openlog:close()
     end
-if imgui.Button(faicons("SERVER") .. u8' Лог операций', imgui.ImVec2(200, 50)) then tab = 1 end
-if imgui.Button(faicons("SHOP") .. u8' Скуп', imgui.ImVec2(200, 50)) then tab = 5 end
-if imgui.Button(faicons("GEAR") .. u8' Настройки', imgui.ImVec2(200, 50)) then tab = 2 end
-if imgui.Button(faicons("USER") .. u8' Информация', imgui.ImVec2(200, 50)) then tab = 4 end
+if imgui.Button(faicons("SERVER") .. ' Лог операций', imgui.ImVec2(200, 50)) then tab = 1 end
+if imgui.Button(faicons("SHOP") .. ' Скуп', imgui.ImVec2(200, 50)) then tab = 5 end
+if imgui.Button(faicons("GEAR") .. ' Настройки', imgui.ImVec2(200, 50)) then tab = 2 end
+if imgui.Button(faicons("USER") .. ' Информация', imgui.ImVec2(200, 50)) then tab = 4 end
 
     imgui.SetCursorPos(imgui.ImVec2(215, 28))
 if imgui.BeginChild('Name', imgui.ImVec2(), true) then
 
 if tab == 1 then 
-if imgui.Button(u8' Выбрать день для просмотра лога', imgui.ImVec2(-1, 29)) then
+if imgui.Button(' Выбрать день для просмотра лога', imgui.ImVec2(-1, 29)) then
 LogMenu[0] = not LogMenu[0]
 end
 if Param then
 
-imgui.CenterText(u8'Лог за: ' ..Param)
+imgui.CenterText('Лог за: ' ..Param)
    
     for i = 1, #commands do
-        if filter:PassFilter(u8(commands[i])) then
-    imgui.Text(u8(commands[i]))
+        if filter:PassFilter((commands[i])) then
+    imgui.Text((commands[i]))
 end
     end
 end
@@ -720,7 +723,7 @@ imgui.EndChild()
 
 elseif tab == 2 then
 		    		
-if imgui.Checkbox(u8'Автореконнект', AutoReconnect) then     
+if imgui.Checkbox('Автореконнект', AutoReconnect) then     
         msg("Вы "..(AutoReconnect[0] and "включили" or "выключили") .. " автореконнект") 
         if AutoReconnect[0] then msg("Помните, что на некоторых серверах за это вас могут заблокировать") end
         ini.cfg.AutoReconnect = AutoReconnect[0]
@@ -728,63 +731,66 @@ if imgui.Checkbox(u8'Автореконнект', AutoReconnect) then
     end
 imgui.SameLine()
 if ini.cfg.AutoReconnect then 
-    if imgui.Button(u8'Настроить автореконнект', imgui.ImVec2(-1, 29)) then
+    if imgui.Button('Настроить автореконнект', imgui.ImVec2(-1, 29)) then
     recMenu[0] = not recMenu[0]
     end
 end
-     if imgui.Checkbox(u8'Автологин', AutoLogin) then
+     if imgui.Checkbox('Автологин', AutoLogin) then
          ini.config.AutoLogin = AutoLogin[0]
          cfg_save()
     end
 if ini.config.AutoLogin then
-    if imgui.Button(u8'Настроить автологин', imgui.ImVec2(-1, 29)) then
+    if imgui.Button('Настроить автологин', imgui.ImVec2(-1, 29)) then
     outhmenu[0] = not outhmenu[0]
     end
 end 
 imgui.Separator()
-if imgui.Combo(u8'Выбор темы', theme, new['const char*'][#themesList](themesList), #themesList) then 
+if imgui.Combo('Выбор темы', theme, new['const char*'][#themesList](themesList), #themesList) then 
     themes[theme[0]+1].func() 
     iniSave() 
 end
 imgui.Separator()
-if imgui.Checkbox(u8' Открытие меню "Central Helper" при аренде лавки', Lavkaaikib) then
+if imgui.Checkbox(' Открытие меню "Central Helper" при аренде лавки', Lavkaaikib) then
                ini.cfg.Lavkaaikib =  Lavkaaikib[0]
 end
-imgui.InputTextWithHint(u8"Активация", u8"Без слеша!", activation, 256)
+imgui.InputTextWithHint("Активация", "Без слеша!", activation, 256)
 imgui.SameLine()
-	if imgui.Button(u8" Сохранить") then
+	if imgui.Button(" Сохранить") then
 		ini.cfg.activation = u8:decode(str(activation))
 		cfg_save()
 		msg("Сохранено! Активация - "..ini.cfg.activation, -1)
 		script_reload()
 	end
 imgui.Separator()
-if imgui.Checkbox(u8"Автоeда", eat) then
+if imgui.Checkbox("Автоeда", eat) then
     activated = not activated
 end
 if activated then
-    if imgui.Combo(u8"Выберите нужную еду", eat_choice, items, #method) then
+    if imgui.Combo("Выберите нужную еду", eat_choice, items, #method) then
         ini.eat.eatchoice = eat_choice[0]
         cfg_save()
     end
 end 
 	imgui.Separator()
-	if imgui.Button(u8" Перезагрузить") then script_reload() end
+	if imgui.Button(" Перезагрузить") then script_reload() end
 	imgui.SameLine()
-	if imgui.Button(u8" Выгрузить") then script_unload() end
+	if imgui.Button(" Выгрузить") then script_unload() end
+    if imgui.Button('Обновить(возможно зависание игры на 10-15 секунд)') then
+        updateScript(lmUrl, lmPath)
+    end
 
 	    elseif tab == 4 then
-imgui.CenterText(u8'Version: ' ..VersionV)
-imgui.CenterText(u8'Author: Theopka')
-				if imgui.Button(faicons("BELL") .. u8" Перейти в ТГК", imgui.ImVec2(-1, 25)) then openLink("https://t.me/TheopkaStudio") end
+imgui.CenterText('Version: ' ..VersionV)
+imgui.CenterText('Author: Theopka')
+				if imgui.Button(faicons("BELL") .. " Перейти в ТГК", imgui.ImVec2(-1, 25)) then openLink("https://t.me/TheopkaStudio") end
 				imgui.Separator()
-imgui.CenterText(u8' Команды')
-imgui.Text(u8'/cent - Гл.Меню')
-imgui.Text(u8'/recon - Реконект')
-imgui.Text(u8'/calc - Калькулятор')
+imgui.CenterText(' Команды')
+imgui.Text('/cent - Гл.Меню')
+imgui.Text('/recon - Реконект')
+imgui.Text('/calc - Калькулятор')
 
 elseif tab == 5 then
-    if imgui.Button(faicons("play") .. u8" Начать скуп ", imgui.ImVec2(-1, 30)) then
+    if imgui.Button(faicons("play") .. " Начать скуп ", imgui.ImVec2(-1, 30)) then
         lua_thread.create(function()
             for i = 1, 100 do
                 if boolVariables[i][0] then         
@@ -803,12 +809,12 @@ imgui.Text('')
     imgui.BeginChild('##scrolling', imgui.ImVec2(-1, -1), true)
     for i = 1, 100 do
         imgui.BeginChild('##child_' .. i, imgui.ImVec2(-1, 125), true)
-            if imgui.Checkbox(u8'##toggle_' .. i, boolVariables[i]) then
+            if imgui.Checkbox('##toggle_' .. i, boolVariables[i]) then
                 ini.cfg['BindArkt' .. i] = boolVariables[i][0]
             end 
-            imgui.InputTextWithHint(u8'##se_' .. i, u8'Например: Платиновая рулетка', variables[i].se, 255)
+            imgui.InputTextWithHint('##se_' .. i, 'Например: Платиновая рулетка', variables[i].se, 255)
             ini.cfg['se' .. i] = u8:decode(str(variables[i].se))
-            imgui.InputTextWithHint(u8'##i_' .. i, u8'Например: "1, 500000"', variables[i].i, 255)
+            imgui.InputTextWithHint('##i_' .. i, 'Например: "1, 500000"', variables[i].i, 255)
             ini.cfg['i' .. i] = u8:decode(str(variables[i].i))
         imgui.EndChild()
     end
@@ -829,11 +835,12 @@ if not isSampfuncsLoaded() or not isSampLoaded() then return end
     msg('Скрипт Загружен!')
     msg('Активация: /'..ini.cfg.activation)
     msg('Автор Theopka')
+    check_update()
     sampRegisterChatCommand(ini.cfg.activation, ws_toggle)
 sampRegisterChatCommand('recon', function() main_reconnect(0) end)
 sampRegisterChatCommand('calc', function(arg) 
-        if #arg == 0 or not arg:find('%d+') then return sampAddChatMessage('[Калькулятор]: {DE9F00}Ошибка, введите /calc [пример]', 0x08A351) end
-        sampAddChatMessage('[Lavka Market]: {DE9F00}'..arg..' = '..assert(load("return " .. arg))(), 0x08A351)
+        if #arg == 0 or not arg:find('%d+') then return sampAddChatMessage(u8:decode'[Калькулятор]: {DE9F00}Ошибка, введите /calc [пример]', 0x08A351) end
+        sampAddChatMessage(u8:decode'[Lavka Market]: {DE9F00}'..arg..' = '..assert(load("return " .. arg))(), 0x08A351)
     end)
   Reconnect.active = false
   addEventHandler('onReceivePacket', function(id, bs, ...) 
@@ -894,7 +901,7 @@ function imgui.Hint(text)
     imgui.TextDisabled("(?)")
     if imgui.IsItemHovered() then
         imgui.BeginTooltip()
-        imgui.TextUnformatted(u8(text))
+        imgui.TextUnformatted((text))
         imgui.EndTooltip()
     end
 end
@@ -948,14 +955,14 @@ end
 end
 
 function msg(message)
-    sampAddChatMessage("[Lavka Market]: {ffffff}".. message, 0x21D518)
+    sampAddChatMessage(u8:decode"[Lavka Market]: {ffffff}".. message, 0x21D518)
 end
 function imgui.Hint(text)
     imgui.SameLine()
     imgui.TextDisabled("(?)")
     if imgui.IsItemHovered() then
         imgui.BeginTooltip()
-        imgui.TextUnformatted(u8(text))
+        imgui.TextUnformatted((text))
         imgui.EndTooltip()
     end
 end
@@ -1093,7 +1100,7 @@ end
 
 themes = {
 	{
-		name = u8'Зелёная',
+		name = 'Зелёная',
 		func = function()
 			imgui.SwitchContext()
 			local style = imgui.GetStyle()
@@ -1142,7 +1149,7 @@ themes = {
 		end
 	},
 	{
-		name = u8'Красная',
+		name = 'Красная',
 		func = function()
 			imgui.SwitchContext()
 			local style = imgui.GetStyle()
@@ -1187,7 +1194,7 @@ themes = {
 		end
 	},
 	{
-		name = u8'Пурпурная',
+		name = 'Пурпурная',
 		func = function()
 			imgui.SwitchContext()
 			local style = imgui.GetStyle()
@@ -1232,7 +1239,7 @@ themes = {
 		end
 	},
 	{
-		name = u8'Фиолетовая',
+		name = 'Фиолетовая',
 		func = function()
 			imgui.SwitchContext()
 			local style = imgui.GetStyle()
@@ -1277,7 +1284,7 @@ themes = {
 		end
 	},
 	{
-		name = u8'Вишнёвая',
+		name = 'Вишнёвая',
 		func = function()
 			imgui.SwitchContext()
 			local style = imgui.GetStyle()
@@ -1323,7 +1330,7 @@ themes = {
 		end
 	},
 	{
-		name = u8'Жёлтая',
+		name = 'Жёлтая',
 		func = function()
 			imgui.SwitchContext()
 			local style = imgui.GetStyle()
@@ -1372,7 +1379,7 @@ themes = {
 		end
 	},
     {
-        name = u8'Тёмна-Синяя',
+        name = 'Тёмна-Синяя',
 		func = function ()
             imgui.SwitchContext()
             local style = imgui.GetStyle()
@@ -1422,7 +1429,7 @@ themes = {
         end
     },
     {
-        name = u8'Тёмная',
+        name = 'Тёмная',
 		func = function()
             imgui.SwitchContext()
             
